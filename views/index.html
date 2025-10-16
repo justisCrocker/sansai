@@ -1,87 +1,29 @@
 {{ block "index" . }}
 <!DOCTYPE HTML>
 <html lang="en">
-    <head>
-        <title></title>
-        <meta charset="UTF-8"/>
-        <meta name="viewport" content="width=device-width, intial-scale=1">
-        <link href="css/index.css" rel="stylesheet">
-        <script src="https://unpkg.com/htmx.org@2.0.2/dist/htmx.js" integrity="sha384-yZq+5izaUBKcRgFbxgkRYwpHhHHCpp5nseXp0MEQ1A4MTWVMnqkmcuFez8x5qfxr" crossorigin="anonymous"></script>
-    </head>
-    <body>
-        {{ template "form" .Form }}
-        <hr />
-        {{ template "display" .Data }}
-        <script>
-        document.addEventListener("DOMContentLoaded", (event) => {
-            document.body.addEventListener('htmx:beforeSwap', function(evt) {
-                if (evt.detail.xhr.status === 422) {
-                    evt.detail.shouldSwap = true;
-                    evt.detail.isError = false;
-                }
-            });
-        })
-        </script>
-    </body>
+  <head>
+    <title>Index</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, intial-scale=1">
+    <link href="css/index.css" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@2.0.2/dist/htmx.js" integrity="sha384-yZq+5izaUBKcRgFbxgkRYwpHhHHCpp5nseXp0MEQ1A4MTWVMnqkmcuFez8x5qfxr" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <header>
+      <p>Sansai</p>
+      <a href="/account">Form</a>
+    </header>
+    <hr />
+    <script>
+    document.addEventListener("DOMContentLoaded", (event) => {
+        document.body.addEventListener('htmx:beforeSwap', function(evt) {
+            if (evt.detail.xhr.status === 422) {
+                evt.detail.shouldSwap = true;
+                evt.detail.isError = false;
+            }
+        });
+    })
+    </script>
+  </body>
 </html>
-{{ end }}
-
-{{ block "form" . }}
-    <form hx-swap="outerHTML" hx-post="/contacts">
-        <label for="name">Name</label>
-        <input {{ if .Values.name }} value="{{ .Values.name }}" {{ end }} type="text" name="name"/>
-
-        <label for="email">Email</label>
-        <input {{ if .Values.name }} value="{{ .Values.name }}" {{ end }} type="text" name="email"/>
-
-        {{ if .Errors.email }}
-            <div style="color: red;">{{ .Errors.email }}</div>
-        {{ end }}
-
-        <button type="submit">Submit</button>
-    </form>
-{{ end }}
-
-{{ block "display" . }}
-  <div style="display: flex; flex-direction: column;">
-    <table id="contacts">
-    <thead>
-      <tr>
-      <th id="n"> Actions
-      <th> Name
-      <th> Email
-    <tbody id="contacts-body">
-      {{ range .Contacts }}
-          {{ template "contact" . }}
-      {{ end }}
-    </table>
-  </div>
-{{ end }}
-
-{{ block "contact" . }}
-    <tr class="contact" id="contact-{{ .Id }}">
-        <td headers="n">
-            <div hx-indicator="#ci-{{ .Id }}" hx-target="#contact-{{ .Id }}" hx-swap="outerHTML swap:500ms" hx-delete="/contacts/{{ .Id }}" style="width: 1rem; cursor: pointer;">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path fill="none" d="M0 0h24v24H0z"/>
-                    <path d="M4 2h16a1 1 0 011 1v1a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1zM3 6h18v16a1 1 0 01-1 1H4a1 1 0 01-1-1V6zm3 3v9a1 1 0 002 0v-9a1 1 0 00-2 0zm5 0v9a1 1 0 002 0v-9a1 1 0 00-2 0zm5 0v9a1 1 0 002 0v-9a1 1 0 00-2 0z"/>
-                </svg>
-            </div>
-            <div id="ci-{{ .Id }}" class="htmx-indicator">
-                <img src="/images/bars.svg" alt="loading" style="width: 1rem">
-            </div>
-        </td>
-        <td> name: <span>{{ .Name }}</span> </td>
-        <td> email: <span>{{ .Email }}</span> </td>
-    </tr>
-{{ end }}
-
-{{ block "oob-contact" . }}
-  <table>
-    <tbody hx-swap-oob="afterbegin:#contacts-body">
-      <tr class="contact" id="contact-{{ .Id }}">
-        {{ template "contact" . }}
-      </tr>
-    </tbody>
-  </table>
 {{ end }}
